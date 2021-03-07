@@ -1,5 +1,9 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using AutoMapper;
 using ManagementSystem.Data;
+using ManagementSystem.Data.DTOs;
 using ManagementSystem.Data.Models;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -10,11 +14,14 @@ namespace MemberManagementSystem.Controllers
     [Route("[controller]")]
     public class UserManagementController : Controller
     {
-        private readonly IUserRepository _userRepository;
+        
+        private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
 
-        public UserManagementController(IUserRepository userRepository)
+        public UserManagementController(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _userRepository = userRepository;
+            _unitOfWork = unitOfWork;
+            _mapper = mapper;
         }
         
         [HttpGet]
@@ -23,7 +30,7 @@ namespace MemberManagementSystem.Controllers
         {
             try
             {
-                return Ok(JsonConvert.SerializeObject(_userRepository.GetAllUsers()));
+                return Ok(GetAllUserDetails());
             }
             catch (Exception ex)
             {
@@ -31,61 +38,69 @@ namespace MemberManagementSystem.Controllers
             }
         }
         
-        [HttpGet]
-        [Route("DeleteUser")]
-        public ActionResult DeleteUser(int userId)
-        {
-            try
-            {
-                if (_userRepository.DeleteUser(userId))
-                    return Ok(JsonConvert.SerializeObject(_userRepository.GetAllUsers()));
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-
-        [HttpGet]
-        [Route("AddUser")]
-        public ActionResult AddUser(User userDetails)
-        {
-            try
-            {
-                if (_userRepository.AddUser(userDetails))
-                    return Ok(JsonConvert.SerializeObject(_userRepository.GetAllUsers()));
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-
-        [HttpGet]
-        [Route("UpdateUser")]
-        public ActionResult UpdateUser(User userDetails)
-        {
-            try
-            {
-                if (_userRepository.UpdateUser(userDetails))
-                    return Ok(JsonConvert.SerializeObject(_userRepository.GetAllUsers()));
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-        
+           
         [HttpGet]
         [Route("GetUser")]
         public ActionResult GetUserById(int userId)
         {
             try
             {
-                return Ok(JsonConvert.SerializeObject(_userRepository.GetUserById(userId)));
+                var userDetails = _unitOfWork.Users.Get(
+                    m => m.UserId == userId, null, "Accounts").FirstOrDefault();
+                return Ok(JsonConvert.SerializeObject(_mapper.Map<UserDto>(userDetails)));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+        
+        [HttpPost]
+        [Route("AddUser")]
+        public ActionResult AddUser(UserDto userDto)
+        {
+            try
+            {
+                var user = _mapper.Map<User>(userDto);
+                _unitOfWork.Users.Insert(user);
+                _unitOfWork.Commit();
+                
+                return Ok(GetAllUserDetails());
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+        
+        [HttpPost]
+        [Route("UpdateUser")]
+        public ActionResult UpdateUser(UserDto userDto)
+        {
+            try
+            {
+                var user = _mapper.Map<User>(userDto);
+                _unitOfWork.Users.Update(user);
+                _unitOfWork.Commit();
+                
+                return Ok(GetAllUserDetails());
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+        
+        [HttpDelete]
+        [Route("DeleteUser")]
+        public ActionResult DeleteUser(int userId)
+        {
+            try
+            {
+                _unitOfWork.Users.Delete(userId);
+                _unitOfWork.Commit();
+                
+                return Ok(GetAllUserDetails());
             }
             catch (Exception ex)
             {
@@ -93,6 +108,11 @@ namespace MemberManagementSystem.Controllers
             }
         }
 
-        
+        private string GetAllUserDetails()
+        {
+            var userList = _unitOfWork.Users.Get(
+                null, q => q.OrderBy(s => s.UserId), "Accounts");
+           return JsonConvert.SerializeObject(_mapper.Map<List<UserDto>>(userList));
+        }
     }
 }
