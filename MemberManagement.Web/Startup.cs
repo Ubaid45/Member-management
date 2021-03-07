@@ -25,7 +25,7 @@ namespace MemberManagementSystem
         {
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo {Title = "MemberManagement.Web-API", Version = "v1"});
+                c.SwaggerDoc("v1", new OpenApiInfo {Title = "MemberManagement.Web", Version = "v1"});
             });
             
             services.AddControllers();
@@ -41,7 +41,7 @@ namespace MemberManagementSystem
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "MemberManagement.Web-API v1"));
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "MemberManagement.Web v1"));
             }
             JsonConvert.DefaultSettings = () => new JsonSerializerSettings
             {

@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MemberManagement.Web-API", "MemberManagement.Web-API\MemberManagement.Web-API.csproj", "{E99802CA-72C4-4799-BBFF-6D4C28E72388}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MemberManagement.Web", "MemberManagement.Web\MemberManagement.Web.csproj", "{E99802CA-72C4-4799-BBFF-6D4C28E72388}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ManagementSystem.Data", "ManagementSystem.Data\ManagementSystem.Data.csproj", "{5B154D2E-C480-4619-8483-A37497832D27}"
 EndProject
