@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using ManagementSystem.Data;
 using ManagementSystem.Data.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -9,11 +8,11 @@ namespace MemberManagementSystem.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class MemberManagementController : Controller
+    public class UserManagementController : Controller
     {
         private readonly IUserRepository _userRepository;
 
-        public MemberManagementController(IUserRepository userRepository)
+        public UserManagementController(IUserRepository userRepository)
         {
             _userRepository = userRepository;
         }
