@@ -1,4 +1,5 @@
 using ManagementSystem.Data;
+using ManagementSystem.Data.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -23,6 +24,8 @@ namespace MemberManagementSystem
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddAutoMapper(typeof(AutoMapping));
+            
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo {Title = "MemberManagement.Web", Version = "v1"});
@@ -31,6 +34,9 @@ namespace MemberManagementSystem
             services.AddControllers();
                 
             services.AddTransient<IUserRepository, UserRepository>();
+            services.AddTransient<IRepository<Account>, BaseRepository<Account>>();
+            services.AddTransient<IRepository<User>, BaseRepository<User>>();
+            services.AddTransient<IUnitOfWork, UnitOfWork>();
             services.AddDbContext<UsersManagementDbContext>(options => options.UseInMemoryDatabase(databaseName: "UserManagement"));
         }
 

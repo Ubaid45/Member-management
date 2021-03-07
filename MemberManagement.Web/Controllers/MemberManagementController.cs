@@ -20,7 +20,7 @@ namespace MemberManagementSystem.Controllers
         
         [HttpGet]
         [Route("GetAllUsers")]
-        public IActionResult GetAllUsers()
+        public ActionResult GetAllUsers()
         {
             try
             {
@@ -28,7 +28,6 @@ namespace MemberManagementSystem.Controllers
             }
             catch (Exception ex)
             {
-                
                 return BadRequest(ex.Message);
             }
         }
@@ -37,28 +36,62 @@ namespace MemberManagementSystem.Controllers
         [Route("DeleteUser")]
         public ActionResult DeleteUser(int userId)
         {
-            return Ok(JsonConvert.SerializeObject(_userRepository.DeleteUser(userId)));
+            try
+            {
+                if (_userRepository.DeleteUser(userId))
+                    return Ok(JsonConvert.SerializeObject(_userRepository.GetAllUsers()));
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpGet]
         [Route("AddUser")]
         public ActionResult AddUser(User userDetails)
         {
-            return  Ok(JsonConvert.SerializeObject(_userRepository.AddUser(userDetails)));
+            try
+            {
+                if (_userRepository.AddUser(userDetails))
+                    return Ok(JsonConvert.SerializeObject(_userRepository.GetAllUsers()));
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpGet]
         [Route("UpdateUser")]
-        public User UpdateUser(User userDetails)
+        public ActionResult UpdateUser(User userDetails)
         {
-            return _userRepository.UpdateUser(userDetails);
+            try
+            {
+                if (_userRepository.UpdateUser(userDetails))
+                    return Ok(JsonConvert.SerializeObject(_userRepository.GetAllUsers()));
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
         
         [HttpGet]
         [Route("GetUser")]
-        public User GetUserById(int userId)
+        public ActionResult GetUserById(int userId)
         {
-            return _userRepository.GetUserById(userId);
+            try
+            {
+                return Ok(JsonConvert.SerializeObject(_userRepository.GetUserById(userId)));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         

@@ -23,86 +23,86 @@ namespace ManagementSystem.Data.Models
                 context.Users.AddRange(
                     new User
                     {
-                        Id = 1,
-                        Name = "Ubaid",
+                        UserId = 1,
+                        UserName = "Ubaid",
                         Address = "Homburger Landstr. 207, 60435, Frankfurt am Main, Germany",
                     },
                     new User
                     {
-                        Id = 2,
-                        Name = "Sibgha",
+                        UserId = 2,
+                        UserName = "Sibgha",
                         Address = "Hombuger str. 290, 60435, Frankfurt am Main, Germany",
                         Accounts = new List<Account>()
                     },
                     new User
                     {
-                        Id = 3,
-                        Name = "Ali",
+                        UserId = 3,
+                        UserName = "Ali",
                         Address = "Nieder Ramstadter str. 64285, Darmstadt, Germany",
                         Accounts = new List<Account>()
                     },
                     new User
                     {
-                        Id = 4,
-                        Name = "Umer",
+                        UserId = 4,
+                        UserName = "Umer",
                         Address = "Am Karlshof. 64285, Darmstadt, Germany",
                         Accounts = new List<Account>()
                     },
                     new User
                     {
-                        Id = 5,
-                        Name = "Florian",
+                        UserId = 5,
+                        UserName = "Florian",
                         Address = "Weisener str. 64287, Darmstadt, Germany",
                         Accounts = new List<Account> ()
                     });
                 
                 context.Accounts.AddRange( new Account
                 {
-                    Id = 1,
+                    AccountId = 1,
                     Balance = 15,
-                    Name = "flight",
+                    AccountName = "flight",
                     Status = Status.Active,
                     UserId = 1
                 },
                 new Account{
-                    Id = 2,
+                    AccountId = 2,
                     Balance = 135,
-                    Name = "Mcdonalds",
+                    AccountName = "Mcdonalds",
                     Status = Status.Active,
                     UserId = 1
                 },
                 new Account{
-                    Id = 3,
+                    AccountId = 3,
                     Balance = 115,
-                    Name = "flight",
+                    AccountName = "flight",
                     Status = Status.Active,
                     UserId = 2
                 },
                 new Account{
-                    Id = 4,
+                    AccountId = 4,
                     Balance = 150,
-                    Name = "Burger King",
+                    AccountName = "Burger King",
                     Status = Status.Active,
                     UserId = 3
                 },
                 new Account{
-                    Id = 5,
+                    AccountId = 5,
                     Balance = 155,
-                    Name = "New Yorker",
+                    AccountName = "New Yorker",
                     Status = Status.Active,
                     UserId = 3
                 },
                 new Account{
-                    Id = 6,
+                    AccountId = 6,
                     Balance = 135,
-                    Name = "H&M",
+                    AccountName = "H&M",
                     Status = Status.Inactive,
                     UserId = 3
                 },
                 new Account{
-                    Id = 7,
+                    AccountId = 7,
                     Balance = 515,
-                    Name = "Lufthansa",
+                    AccountName = "Lufthansa",
                     Status = Status.Active,
                     UserId = 4
                 }

@@ -1,11 +1,10 @@
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
+using ManagementSystem.Data.Models;
 
-namespace ManagementSystem.Data.Models
+namespace ManagementSystem.Data.DTOs
 {
-    public class User
+    public class UserDto
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int UserId { get; set; }
         public string UserName { get; set; }
         public string Address { get; set; }
