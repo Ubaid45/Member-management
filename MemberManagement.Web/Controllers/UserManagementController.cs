@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using AutoMapper;
-using ManagementSystem.Data;
 using ManagementSystem.Data.DTOs;
 using ManagementSystem.Data.Interfaces;
 using ManagementSystem.Data.Models;
@@ -24,6 +24,8 @@ namespace MemberManagementSystem.Controllers
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
+
+        #region CRUD
         
         [HttpGet]
         [Route("GetAllUsers")]
@@ -109,11 +111,95 @@ namespace MemberManagementSystem.Controllers
             }
         }
 
+        #endregion
+
+        #region Data Import/Export
+
+        
+        [HttpGet]
+        [Route("ImportDataFromFile")]
+        public ActionResult ImportDataFromFile()
+        {
+            try
+            {
+                var userCollection = PopulateMembersFromFile();
+                foreach (var user in userCollection.Where(user => !_unitOfWork.Users.Get(m => m.UserName == user.UserName).Any()))
+                {
+                    _unitOfWork.Users.Insert(user);
+                }
+                
+                _unitOfWork.Commit();
+                return Ok(GetAllUserDetails());
+            }
+
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            
+        }
+        
+        [HttpGet]
+        [Route("ExportUsers")]
+        public ActionResult ExportUsers()
+        {
+            try
+            {
+                var outputFilePath = SetOutputFilePath();
+                
+                var userCollection = _unitOfWork.Users.GetFilteredDataToExport();
+                
+                WriteOutputFile(outputFilePath, userCollection);
+
+                return Ok(GetAllUserDetails());
+            }
+
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            
+        }
+
+        private void WriteOutputFile(string outputFilePath, List<ExportUserDto> userCollection)
+        {
+            //open file stream
+            using (var file = System.IO.File.CreateText(outputFilePath))
+            {
+                var serializer = new JsonSerializer();
+                //serialize object directly into file stream
+                serializer.Serialize(file, _mapper.Map<List<ExportUserDto>>(userCollection));
+            }
+        }
+
+        private static string SetOutputFilePath()
+        {
+            var directory = System.IO.Path.GetDirectoryName(Directory.GetCurrentDirectory());
+            var outputFilePath = Path.Combine(directory ?? string.Empty, "FileOut.json");
+            return outputFilePath;
+        }
+
+        #endregion
+        
+
+        #region Private members
         private string GetAllUserDetails()
         {
             var userList = _unitOfWork.Users.Get(
                 null, q => q.OrderBy(s => s.UserId), "Accounts");
-           return JsonConvert.SerializeObject(_mapper.Map<List<UserDto>>(userList));
+            return JsonConvert.SerializeObject(_mapper.Map<List<UserDto>>(userList));
         }
-    }
+        
+        private  List<User> PopulateMembersFromFile()
+        {
+            var directory = System.IO.Path.GetDirectoryName(Directory.GetCurrentDirectory());
+            using var r = new StreamReader(Path.Combine(directory ?? string.Empty,"members.json"));
+            var json = r.ReadToEnd();
+            var response = JsonConvert.DeserializeObject<List<User>>(json);
+            return response;
+        }
+
+
+        #endregion
+           }
 }

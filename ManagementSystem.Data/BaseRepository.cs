@@ -50,7 +50,7 @@ namespace ManagementSystem.Data
 
             catch (Exception ex)
             {
-                Debug.WriteLine(ex.InnerException);
+                Debug.WriteLine(ex.StackTrace);
                 return null;
             }
             
@@ -64,7 +64,7 @@ namespace ManagementSystem.Data
 
             catch (Exception ex)
             {
-                Debug.WriteLine(ex.InnerException);
+                Debug.WriteLine(ex.StackTrace);
                 return null;
             }
         }
@@ -78,7 +78,7 @@ namespace ManagementSystem.Data
 
             catch (Exception ex)
             {
-                Debug.WriteLine(ex.InnerException);
+                Debug.WriteLine(ex.StackTrace);
             }
         }
 
@@ -92,7 +92,7 @@ namespace ManagementSystem.Data
 
             catch (Exception ex)
             {
-                Debug.WriteLine(ex.InnerException);
+                Debug.WriteLine(ex.StackTrace);
             }
         }
 
@@ -109,7 +109,7 @@ namespace ManagementSystem.Data
 
             catch (Exception ex)
             {
-                Debug.WriteLine(ex.InnerException);
+                Debug.WriteLine(ex.StackTrace);
             }
             
         }
@@ -124,7 +124,7 @@ namespace ManagementSystem.Data
 
             catch (Exception ex)
             {
-                Debug.WriteLine(ex.InnerException);
+                Debug.WriteLine(ex.StackTrace);
             }
         }
     }

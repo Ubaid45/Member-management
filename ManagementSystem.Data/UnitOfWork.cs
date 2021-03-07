@@ -9,7 +9,7 @@ namespace ManagementSystem.Data
     {
 
         private readonly UsersManagementDbContext _dbContext;
-        private IBaseRepository<User> _users;
+        private IUserRepository _users;
         private IAccountRepository _accounts;
 
         public UnitOfWork(UsersManagementDbContext dbContext)
@@ -17,9 +17,9 @@ namespace ManagementSystem.Data
             _dbContext = dbContext;
         }
 
-        public IBaseRepository<User> Users
+        public IUserRepository Users
         {
-            get { return _users ??= new BaseRepository<User>(_dbContext); }
+            get { return _users ??= new UserRepository(_dbContext); }
         }
 
         public IAccountRepository Accounts
@@ -36,7 +36,7 @@ namespace ManagementSystem.Data
 
             catch (Exception ex)
             {
-                Debug.WriteLine(ex.InnerException);
+                Debug.WriteLine(ex.StackTrace);
             }
            
         }
