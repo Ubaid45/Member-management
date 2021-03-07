@@ -9,22 +9,22 @@ namespace ManagementSystem.Data
     {
 
         private readonly UsersManagementDbContext _dbContext;
-        private BaseRepository<User> _users;
-        private BaseRepository<Account> _accounts;
+        private IBaseRepository<User> _users;
+        private IAccountRepository _accounts;
 
         public UnitOfWork(UsersManagementDbContext dbContext)
         {
             _dbContext = dbContext;
         }
 
-        public IRepository<User> Users
+        public IBaseRepository<User> Users
         {
             get { return _users ??= new BaseRepository<User>(_dbContext); }
         }
 
-        public IRepository<Account> Accounts
+        public IAccountRepository Accounts
         {
-            get { return _accounts ??= new BaseRepository<Account>(_dbContext); }
+            get { return _accounts ??= new AccountRepository(_dbContext); }
         }
 
         public void Commit()

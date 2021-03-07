@@ -24,6 +24,8 @@ namespace MemberManagementSystem.Controllers
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
+
+        #region CRUD
         
         [HttpGet]
         [Route("GetAllAccounts")]
@@ -115,5 +117,47 @@ namespace MemberManagementSystem.Controllers
                 null, q => q.OrderBy(s => s.AccountId), "User");
            return JsonConvert.SerializeObject(_mapper.Map<List<AccountDto>>(accountList));
         }
+        
+        #endregion
+
+        #region Points
+    
+        [HttpPost]
+        [Route("CollectPoints")]
+        public ActionResult CollectPoints(int accountId, double points)
+        {
+            try
+            {
+                if (!_unitOfWork.Accounts.CollectPoints(accountId, points)) return BadRequest();
+                _unitOfWork.Commit();
+                
+                return Ok(GetAllAccountDetails());
+
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+        
+        [HttpPost]
+        [Route("RedeemPoints")]
+        public ActionResult RedeemPoints(int accountId, double points)
+        {
+            try
+            {
+                if (!_unitOfWork.Accounts.RedeemPoints(accountId, points)) return BadRequest();
+                
+                _unitOfWork.Commit();
+                return Ok(GetAllAccountDetails());
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+        
+
+        #endregion
     }
 }

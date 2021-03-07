@@ -5,7 +5,7 @@ using System.Linq.Expressions;
 
 namespace ManagementSystem.Data.Interfaces
 {
-    public interface IRepository<TEntity> where TEntity :class
+    public interface IBaseRepository<TEntity> where TEntity :class
     {
         void Delete(TEntity entityToDelete);
         void Delete(object id);

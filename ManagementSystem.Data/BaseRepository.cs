@@ -8,15 +8,15 @@ using ManagementSystem.Data.Interfaces;
 
 namespace ManagementSystem.Data
 {
-    public class BaseRepository<TEntity> : IRepository <TEntity> where TEntity : class
+    public class BaseRepository<TEntity> : IBaseRepository <TEntity> where TEntity : class
     {
-        private readonly UsersManagementDbContext _context;
-        private readonly DbSet<TEntity> _dbSet;
+        protected readonly UsersManagementDbContext Context;
+        protected readonly DbSet<TEntity> DbSet;
 
         public BaseRepository(UsersManagementDbContext context)
         {
-            _context = context;
-            _dbSet = context.Set<TEntity>();
+            Context = context;
+            DbSet = context.Set<TEntity>();
         }
 
         public virtual IEnumerable<TEntity> Get(
@@ -26,7 +26,7 @@ namespace ManagementSystem.Data
         {
             try
             {
-                IQueryable<TEntity> query = _dbSet;
+                IQueryable<TEntity> query = DbSet;
 
                 if (filter != null)
                 {
@@ -59,7 +59,7 @@ namespace ManagementSystem.Data
         public TEntity GetById(object id, string includeProperties = "")
         {
             try {
-                return _dbSet.Find(id);
+                return DbSet.Find(id);
             }
 
             catch (Exception ex)
@@ -73,7 +73,7 @@ namespace ManagementSystem.Data
         {
             try
             {
-                _dbSet.Add(entity);
+                DbSet.Add(entity);
             }
 
             catch (Exception ex)
@@ -86,7 +86,7 @@ namespace ManagementSystem.Data
         {
             try
             {
-                var entityToDelete = _dbSet.Find(id);
+                var entityToDelete = DbSet.Find(id);
                 Delete(entityToDelete);
             }
 
@@ -100,11 +100,11 @@ namespace ManagementSystem.Data
         {
             try
             {
-                if (_context.Entry(entityToDelete).State == EntityState.Detached)
+                if (Context.Entry(entityToDelete).State == EntityState.Detached)
                 {
-                    _dbSet.Attach(entityToDelete);
+                    DbSet.Attach(entityToDelete);
                 }
-                _dbSet.Remove(entityToDelete);
+                DbSet.Remove(entityToDelete);
             }
 
             catch (Exception ex)
@@ -118,8 +118,8 @@ namespace ManagementSystem.Data
         {
             try
             {
-                _dbSet.Attach(entityToUpdate);
-                _context.Entry(entityToUpdate).State = EntityState.Modified;
+                DbSet.Attach(entityToUpdate);
+                Context.Entry(entityToUpdate).State = EntityState.Modified;
             }
 
             catch (Exception ex)

@@ -4,8 +4,8 @@ namespace ManagementSystem.Data.Interfaces
 {
     public interface IUnitOfWork
     {
-        IRepository<User> Users { get; }
-        IRepository<Account> Accounts { get; }
+        IBaseRepository<User> Users { get; }
+        IAccountRepository Accounts { get; }
         void Commit();
     }
 }

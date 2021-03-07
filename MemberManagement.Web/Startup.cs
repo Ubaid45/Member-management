@@ -34,8 +34,8 @@ namespace MemberManagementSystem
             
             services.AddControllers();
                 
-            services.AddTransient<IRepository<Account>, BaseRepository<Account>>();
-            services.AddTransient<IRepository<User>, BaseRepository<User>>();
+            services.AddTransient<IAccountRepository, AccountRepository>();
+            services.AddTransient<IBaseRepository<User>, BaseRepository<User>>();
             services.AddTransient<IUnitOfWork, UnitOfWork>();
             services.AddDbContext<UsersManagementDbContext>(options => options.UseInMemoryDatabase(databaseName: "UserManagement"));
         }
