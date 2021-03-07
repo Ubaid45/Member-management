@@ -6,6 +6,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace MemberManagementSystem
 {
@@ -21,12 +23,13 @@ namespace MemberManagementSystem
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo {Title = "MemberManagement.Web-API", Version = "v1"});
             });
             
+            services.AddControllers();
+                
             services.AddTransient<IUserRepository, UserRepository>();
             services.AddDbContext<UsersManagementDbContext>(options => options.UseInMemoryDatabase(databaseName: "UserManagement"));
         }
@@ -40,7 +43,11 @@ namespace MemberManagementSystem
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "MemberManagement.Web-API v1"));
             }
-
+            JsonConvert.DefaultSettings = () => new JsonSerializerSettings
+            {
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+            };
+            
             app.UseHttpsRedirection();
 
             app.UseRouting();

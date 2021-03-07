@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using ManagementSystem.Data.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace ManagementSystem.Data
 {
@@ -13,29 +14,35 @@ namespace ManagementSystem.Data
             _context = context;
         }
         
-        public bool AddUser(User userDetails)
+        public User AddUser(User userDetails)
         {
-            throw new System.NotImplementedException();
+            _context.Users.Add(userDetails);
+            _context.SaveChanges();
+            return userDetails;
         }
 
         public bool DeleteUser(int userId)
         {
-            throw new System.NotImplementedException();
+            _context.Users.Remove(GetUserById(userId));
+            _context.SaveChanges();
+            return true;
         }
 
-        public bool UpdateUser(User userDetails)
+        public User UpdateUser(User userDetails)
         {
-            throw new System.NotImplementedException();
+            _context.Users.Update(userDetails);
+            _context.SaveChanges();
+            return userDetails;
         }
 
-        public bool GetUserById(int userId)
+        public User GetUserById(int userId)
         {
-            throw new System.NotImplementedException();
+            return _context.Users.FirstOrDefault(m => m.Id == userId);
         }
 
         public List<User> GetAllUsers()
         {
-            return _context.Users.ToList();
+            return _context.Users.Include("Accounts").Select(a => a).ToList();
         }
     }
 }

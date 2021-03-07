@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using ManagementSystem.Data;
 using ManagementSystem.Data.Models;
@@ -19,9 +20,17 @@ namespace MemberManagementSystem.Controllers
         
         [HttpGet]
         [Route("GetAllUsers")]
-        public ActionResult GetAllUsers()
+        public IActionResult GetAllUsers()
         {
-            return Ok(JsonConvert.SerializeObject(_userRepository.GetAllUsers()));
+            try
+            {
+                return Ok(JsonConvert.SerializeObject(_userRepository.GetAllUsers()));
+            }
+            catch (Exception ex)
+            {
+                
+                return BadRequest(ex.Message);
+            }
         }
         
         [HttpGet]

@@ -5,10 +5,10 @@ namespace ManagementSystem.Data
 {
     public interface IUserRepository
     {
-        public bool AddUser(User userDetails);
+        public User AddUser(User userDetails);
         public bool DeleteUser(int userId);
-        public bool UpdateUser(User userDetails);
-        public bool GetUserById(int userId);
+        public User UpdateUser(User userDetails);
+        public User GetUserById(int userId);
         public List<User> GetAllUsers();
     }
 }
