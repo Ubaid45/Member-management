@@ -1,4 +1,5 @@
 using ManagementSystem.Data;
+using ManagementSystem.Data.Interfaces;
 using ManagementSystem.Data.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -33,7 +34,6 @@ namespace MemberManagementSystem
             
             services.AddControllers();
                 
-            services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<IRepository<Account>, BaseRepository<Account>>();
             services.AddTransient<IRepository<User>, BaseRepository<User>>();
             services.AddTransient<IUnitOfWork, UnitOfWork>();

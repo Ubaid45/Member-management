@@ -1,6 +1,6 @@
 using ManagementSystem.Data.Models;
 
-namespace ManagementSystem.Data
+namespace ManagementSystem.Data.Interfaces
 {
     public interface IUnitOfWork
     {

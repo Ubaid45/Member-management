@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using ManagementSystem.Data.Interfaces;
 using ManagementSystem.Data.Models;
 
 namespace ManagementSystem.Data

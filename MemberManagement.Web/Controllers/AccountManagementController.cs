@@ -4,6 +4,7 @@ using System.Linq;
 using AutoMapper;
 using ManagementSystem.Data;
 using ManagementSystem.Data.DTOs;
+using ManagementSystem.Data.Interfaces;
 using ManagementSystem.Data.Models;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
