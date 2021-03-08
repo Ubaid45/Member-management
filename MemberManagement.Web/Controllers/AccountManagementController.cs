@@ -116,7 +116,7 @@ namespace MemberManagementSystem.Controllers
                 _unitOfWork.Accounts.Delete(accountId);
                 var savedChanges =_unitOfWork.Commit();
 
-                return Json(savedChanges > 0 ? new { status="success",message="Added deleted successfully"} 
+                return Json(savedChanges > 0 ? new { status="success",message="Account deleted successfully"} 
                     : new { status="error",message="Account is not deleted"});
             }
             catch (Exception ex)

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using AutoMapper;
@@ -33,15 +34,16 @@ namespace MemberManagementSystem.Controllers
         {
             try
             {
-                return Ok(GetAllUserDetails());
+                return Ok(ResponseToJson(GetAllUserDetails()));
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                Debug.WriteLine(ex.StackTrace);
+                return Json(new { status="error",message="Error Getting the user collection"});
             }
         }
-        
-           
+
+
         [HttpGet]
         [Route("GetUser")]
         public ActionResult GetUserById(int userId)
@@ -50,11 +52,13 @@ namespace MemberManagementSystem.Controllers
             {
                 var userDetails = _unitOfWork.Users.Get(
                     m => m.UserId == userId, null, "Accounts").FirstOrDefault();
-                return Ok(JsonConvert.SerializeObject(_mapper.Map<UserDto>(userDetails)));
+                return Ok(ResponseToJson(_mapper.Map<UserDto>(userDetails)));
             }
+
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                Debug.WriteLine(ex.StackTrace);
+                return Json(new { status="error",message="Error Getting user details"});
             }
         }
         
@@ -66,13 +70,16 @@ namespace MemberManagementSystem.Controllers
             {
                 var user = _mapper.Map<User>(userDto);
                 _unitOfWork.Users.Insert(user);
-                _unitOfWork.Commit();
-                
-                return Ok(GetAllUserDetails());
+                var savedChanges =_unitOfWork.Commit();
+
+                return Json(savedChanges > 0 ? new { status="success",message="Added user successfully"} 
+                    : new { status="error",message="User is not added"});
             }
+
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                Debug.WriteLine(ex.StackTrace);
+                return Json(new { status="error",message="Error adding User"});
             }
         }
         
@@ -84,13 +91,15 @@ namespace MemberManagementSystem.Controllers
             {
                 var user = _mapper.Map<User>(userDto);
                 _unitOfWork.Users.Update(user);
-                _unitOfWork.Commit();
-                
-                return Ok(GetAllUserDetails());
+                var savedChanges =_unitOfWork.Commit();
+
+                return Json(savedChanges > 0 ? new { status="success",message="User updated successfully"} 
+                    : new { status="error",message="User is not updated"});
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                Debug.WriteLine(ex.StackTrace);
+                return Json(new { status="error",message="Error updating User"});
             }
         }
         
@@ -101,13 +110,15 @@ namespace MemberManagementSystem.Controllers
             try
             {
                 _unitOfWork.Users.Delete(userId);
-                _unitOfWork.Commit();
-                
-                return Ok(GetAllUserDetails());
+                var savedChanges =_unitOfWork.Commit();
+
+                return Json(savedChanges > 0 ? new { status="success",message="User deleted successfully"} 
+                    : new { status="error",message="User is not deleted"});
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                Debug.WriteLine(ex.StackTrace);
+                return Json(new { status="error",message="Error deleting User"});
             }
         }
 
@@ -128,13 +139,16 @@ namespace MemberManagementSystem.Controllers
                     _unitOfWork.Users.Insert(user);
                 }
                 
-                _unitOfWork.Commit();
-                return Ok(GetAllUserDetails());
-            }
+                var savedChanges = _unitOfWork.Commit();
+                
+                return Json(savedChanges > 0 ? new { status="success",message="Data is successfully imported"} 
+                    : new { status="error",message="Some error happened while importing"});
 
+            }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                Debug.WriteLine(ex.StackTrace);
+                return Json(new { status="error",message="Error Importing data"});
             }
             
         }
@@ -151,12 +165,13 @@ namespace MemberManagementSystem.Controllers
                 
                 WriteOutputFile(outputFilePath, userCollection);
 
-                return Ok(GetAllUserDetails());
+                return Json(new {status = "success", message = "Data is successfully exported"});
             }
 
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                Debug.WriteLine(ex.StackTrace);
+                return Json(new { status="error",message="Error Exporting data"});
             }
             
         }
@@ -165,11 +180,19 @@ namespace MemberManagementSystem.Controllers
         
 
         #region Private members
-        private string GetAllUserDetails()
+        
+        private string ResponseToJson<T>(T data) where T: class
+        {
+            return data != null
+                ? JsonConvert.SerializeObject(data)
+                : JsonConvert.SerializeObject(new object());
+        }
+        
+        private List<UserDto> GetAllUserDetails()
         {
             var userList = _unitOfWork.Users.Get(
                 null, q => q.OrderBy(s => s.UserId), "Accounts");
-            return JsonConvert.SerializeObject(_mapper.Map<List<UserDto>>(userList));
+            return _mapper.Map<List<UserDto>>(userList);
         }
         
         private  List<User> PopulateMembersFromFile()
