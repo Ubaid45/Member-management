@@ -34,7 +34,8 @@ namespace MemberManagementSystem.Controllers
         {
             try
             {
-                return Ok(ResponseToJson(GetAllUserDetails()));
+                var data = GetAllUsersFromUow();
+                return Ok(ResponseToJson(_mapper.Map<List<UserDto>>(data)));
             }
             catch (Exception ex)
             {
@@ -50,8 +51,7 @@ namespace MemberManagementSystem.Controllers
         {
             try
             {
-                var userDetails = _unitOfWork.Users.Get(
-                    m => m.UserId == userId, null, "Accounts").FirstOrDefault();
+                var userDetails = GetUserFromUow(userId);
                 return Ok(ResponseToJson(_mapper.Map<UserDto>(userDetails)));
             }
 
@@ -61,7 +61,7 @@ namespace MemberManagementSystem.Controllers
                 return Json(new { status="error",message="Error Getting user details"});
             }
         }
-        
+
         [HttpPost]
         [Route("AddUser")]
         public ActionResult AddUser(UserDto userDto)
@@ -177,7 +177,24 @@ namespace MemberManagementSystem.Controllers
         }
         
         #endregion
+
+        #region Testables
+
+        [NonAction]
+        public User GetUserFromUow(int userId)
+        {
+            return _unitOfWork.Users.Get(
+                m => m.UserId == userId, null, "Accounts").FirstOrDefault();
+        }
         
+        [NonAction]
+        public List<User> GetAllUsersFromUow()
+        {
+            return  _unitOfWork.Users.Get(
+                null, null, "Accounts").ToList();
+        }
+
+        #endregion
 
         #region Private members
         
@@ -187,14 +204,7 @@ namespace MemberManagementSystem.Controllers
                 ? JsonConvert.SerializeObject(data)
                 : JsonConvert.SerializeObject(new object());
         }
-        
-        private List<UserDto> GetAllUserDetails()
-        {
-            var userList = _unitOfWork.Users.Get(
-                null, q => q.OrderBy(s => s.UserId), "Accounts");
-            return _mapper.Map<List<UserDto>>(userList);
-        }
-        
+
         private  List<User> PopulateMembersFromFile()
         {
             var directory = System.IO.Path.GetDirectoryName(Directory.GetCurrentDirectory());
