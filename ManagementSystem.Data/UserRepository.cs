@@ -14,6 +14,12 @@ namespace ManagementSystem.Data
 
         public List<ExportUserDto> GetFilteredDataToExport()
         {
+            var userLis = (from ac in Context.Accounts
+                join u in Context.Users 
+                on ac.UserId equals u.UserId 
+                where ac.Balance >= 20 && ac.Status == Status.Inactive
+                select u);
+            
             var userList = (from u in Context.Users
                 join ac in Context.Accounts  on u.UserId equals ac.UserId
                 where ac.Balance >= 20 && ac.Status == Status.Inactive

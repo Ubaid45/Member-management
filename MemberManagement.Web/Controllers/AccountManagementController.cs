@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using AutoMapper;
-using ManagementSystem.Data;
 using ManagementSystem.Data.DTOs;
 using ManagementSystem.Data.Interfaces;
 using ManagementSystem.Data.Models;
@@ -33,12 +33,15 @@ namespace MemberManagementSystem.Controllers
         {
             try
             {
-                return Ok(GetAllAccountDetails());
+                return Ok(ResponseToJson(GetAllAccountDetails()));
             }
+            
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                Debug.WriteLine(ex.StackTrace);
+                return Json(new { status="error",message="Error Getting the account collection"});
             }
+            
         }
         
            
@@ -50,13 +53,17 @@ namespace MemberManagementSystem.Controllers
             {
                 var accountDetails = _unitOfWork.Accounts.Get(
                     m => m.AccountId == accountId, null, "User").FirstOrDefault();
-                return Ok(JsonConvert.SerializeObject(_mapper.Map<AccountDto>(accountDetails)));
+                return Ok(ResponseToJson(_mapper.Map<AccountDto>(accountDetails)));
             }
+
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                Debug.WriteLine(ex.StackTrace);
+                return Json(new { status="error",message="Error Getting details"});
             }
+                
         }
+        
         
         [HttpPost]
         [Route("AddAccount")]
@@ -66,17 +73,21 @@ namespace MemberManagementSystem.Controllers
             {
                 var account = _mapper.Map<Account>(accountDto);
                 _unitOfWork.Accounts.Insert(account);
-                _unitOfWork.Commit();
-                
-                return Ok(GetAllAccountDetails());
+                var savedChanges =_unitOfWork.Commit();
+
+                return Json(savedChanges > 0 ? new { status="success",message="Added account successfully"} 
+                    : new { status="error",message="Account is not added"});
             }
+
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                Debug.WriteLine(ex.StackTrace);
+                return Json(new { status="error",message="Error adding Account"});
             }
+                
         }
         
-        [HttpPost]
+        [HttpPut]
         [Route("UpdateAccount")]
         public ActionResult UpdateAccount(AccountDto accountDto)
         {
@@ -84,13 +95,15 @@ namespace MemberManagementSystem.Controllers
             {
                 var account = _mapper.Map<Account>(accountDto);
                 _unitOfWork.Accounts.Update(account);
-                _unitOfWork.Commit();
-                
-                return Ok(GetAllAccountDetails());
+                var savedChanges =_unitOfWork.Commit();
+
+                return Json(savedChanges > 0 ? new { status="success",message="Account updated successfully"} 
+                    : new { status="error",message="Account is not updated"});
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                Debug.WriteLine(ex.StackTrace);
+                return Json(new { status="error",message="Error updating Account"});
             }
         }
         
@@ -101,21 +114,33 @@ namespace MemberManagementSystem.Controllers
             try
             {
                 _unitOfWork.Accounts.Delete(accountId);
-                _unitOfWork.Commit();
-                
-                return Ok(GetAllAccountDetails());
+                var savedChanges =_unitOfWork.Commit();
+
+                return Json(savedChanges > 0 ? new { status="success",message="Added deleted successfully"} 
+                    : new { status="error",message="Account is not deleted"});
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                Debug.WriteLine(ex.StackTrace);
+                return Json(new { status="error",message="Error deleting Account"});
             }
         }
+        #endregion
 
-        private string GetAllAccountDetails()
+        #region Private Members
+
+        private List<AccountDto> GetAllAccountDetails()
         {
             var accountList = _unitOfWork.Accounts.Get(
                 null, q => q.OrderBy(s => s.AccountId), "User");
-           return JsonConvert.SerializeObject(_mapper.Map<List<AccountDto>>(accountList));
+           return _mapper.Map<List<AccountDto>>(accountList);
+        }
+        
+        private string ResponseToJson<T>(T data) where T: class
+        {
+                return data != null
+                    ? JsonConvert.SerializeObject(data)
+                    : JsonConvert.SerializeObject(new object());
         }
         
         #endregion
@@ -128,15 +153,18 @@ namespace MemberManagementSystem.Controllers
         {
             try
             {
-                if (!_unitOfWork.Accounts.CollectPoints(accountId, points)) return BadRequest();
-                _unitOfWork.Commit();
+                var savedChanges = 0;
+                if (_unitOfWork.Accounts.CollectPoints(accountId, points))
+                    savedChanges = _unitOfWork.Commit();
                 
-                return Ok(GetAllAccountDetails());
+                return Json(savedChanges > 0 ? new { status="success",message="Points collected successfully"} 
+                    : new { status="error",message="Points are collected redeemed"});
 
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                Debug.WriteLine(ex.StackTrace);
+                return Json(new { status="error",message="Error collecting points"});
             }
         }
         
@@ -146,14 +174,17 @@ namespace MemberManagementSystem.Controllers
         {
             try
             {
-                if (!_unitOfWork.Accounts.RedeemPoints(accountId, points)) return BadRequest();
+                var savedChanges = 0;
+                if (_unitOfWork.Accounts.RedeemPoints(accountId, points))
+                    savedChanges = _unitOfWork.Commit();
                 
-                _unitOfWork.Commit();
-                return Ok(GetAllAccountDetails());
+                return Json(savedChanges > 0 ? new { status="success",message="Points redeemed successfully"} 
+                    : new { status="error",message="Points are not redeemed"});
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                Debug.WriteLine(ex.StackTrace);
+                return Json(new { status="error",message="Error redeeming points"});
             }
         }
         

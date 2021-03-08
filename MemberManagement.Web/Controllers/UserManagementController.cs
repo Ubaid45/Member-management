@@ -160,25 +160,7 @@ namespace MemberManagementSystem.Controllers
             }
             
         }
-
-        private void WriteOutputFile(string outputFilePath, List<ExportUserDto> userCollection)
-        {
-            //open file stream
-            using (var file = System.IO.File.CreateText(outputFilePath))
-            {
-                var serializer = new JsonSerializer();
-                //serialize object directly into file stream
-                serializer.Serialize(file, _mapper.Map<List<ExportUserDto>>(userCollection));
-            }
-        }
-
-        private static string SetOutputFilePath()
-        {
-            var directory = System.IO.Path.GetDirectoryName(Directory.GetCurrentDirectory());
-            var outputFilePath = Path.Combine(directory ?? string.Empty, "FileOut.json");
-            return outputFilePath;
-        }
-
+        
         #endregion
         
 
@@ -199,7 +181,24 @@ namespace MemberManagementSystem.Controllers
             return response;
         }
 
+        private void WriteOutputFile(string outputFilePath, List<ExportUserDto> userCollection)
+        {
+            //open file stream
+            using (var file = System.IO.File.CreateText(outputFilePath))
+            {
+                var serializer = new JsonSerializer();
+                //serialize object directly into file stream
+                serializer.Serialize(file, _mapper.Map<List<ExportUserDto>>(userCollection));
+            }
+        }
+
+        private static string SetOutputFilePath()
+        {
+            var directory = System.IO.Path.GetDirectoryName(Directory.GetCurrentDirectory());
+            var outputFilePath = Path.Combine(directory ?? string.Empty, "FileOut.json");
+            return outputFilePath;
+        }
 
         #endregion
-           }
+    }
 }

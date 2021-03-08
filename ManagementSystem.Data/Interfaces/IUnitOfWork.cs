@@ -6,6 +6,6 @@ namespace ManagementSystem.Data.Interfaces
     {
         IUserRepository Users { get; }
         IAccountRepository Accounts { get; }
-        void Commit();
+        int Commit();
     }
 }

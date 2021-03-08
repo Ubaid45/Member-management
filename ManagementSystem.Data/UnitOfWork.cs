@@ -27,16 +27,17 @@ namespace ManagementSystem.Data
             get { return _accounts ??= new AccountRepository(_dbContext); }
         }
 
-        public void Commit()
+        public int Commit()
         {
             try
-            {
-                 _dbContext.SaveChanges();
+            { 
+                return _dbContext.SaveChanges();
             }
 
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.StackTrace);
+                return 0;
             }
            
         }
