@@ -83,7 +83,7 @@ namespace MemberManagementSystem.Controllers
             }
         }
         
-        [HttpPost]
+        [HttpPut]
         [Route("UpdateUser")]
         public ActionResult UpdateUser(UserDto userDto)
         {
@@ -142,7 +142,7 @@ namespace MemberManagementSystem.Controllers
                 var savedChanges = _unitOfWork.Commit();
                 
                 return Json(savedChanges > 0 ? new { status="success",message="Data is successfully imported"} 
-                    : new { status="error",message="Some error happened while importing"});
+                    : new { status="success",message="Nothing was imported."});
 
             }
             catch (Exception ex)
